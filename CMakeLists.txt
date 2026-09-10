@@ -29,6 +29,9 @@ target_include_directories(
 
 if(MSVC)
     target_compile_options(llq INTERFACE /W4 /permissive-)
+    if(LLQ_ENABLE_ASAN OR LLQ_ENABLE_TSAN)
+        message(FATAL_ERROR "The configured sanitizer options require GCC or Clang on Linux")
+    endif()
 else()
     target_compile_options(llq INTERFACE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
 

@@ -27,7 +27,10 @@ __pycache__/
 venv/
 
 # Benchmark and profiling output
-/results/generated/
+/results/raw/*.csv
+/results/raw/*.json
+/results/plots/*
+!/results/plots/.gitkeep
 *.prof
 *.trace
 

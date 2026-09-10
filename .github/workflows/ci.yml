@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - { cc: gcc, cxx: g++ }
+          - { cc: clang, cxx: clang++ }
+    env:
+      CC: ${{ matrix.compiler.cc }}
+      CXX: ${{ matrix.compiler.cxx }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DLLQ_BUILD_BENCHMARKS=ON
+      - name: Build
+        run: cmake --build build --parallel 2
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+      - name: Benchmark smoke test
+        run: >-
+          ./build/benchmarks/queue_benchmark --queue mpmc --producers 2 --consumers 2
+          --operations 10000 --capacity 1024 --payload 64
+
+  thread-sanitizer:
+    runs-on: ubuntu-24.04
+    env:
+      CC: gcc
+      CXX: g++
+      TSAN_OPTIONS: halt_on_error=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: >-
+          cmake -S . -B build-tsan -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DLLQ_ENABLE_TSAN=ON -DLLQ_BUILD_BENCHMARKS=OFF
+      - name: Build
+        run: cmake --build build-tsan --parallel 2
+      - name: Test with ThreadSanitizer
+        run: ctest --test-dir build-tsan --output-on-failure
