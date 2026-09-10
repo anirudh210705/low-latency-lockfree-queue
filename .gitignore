@@ -1,0 +1,43 @@
+# CMake and build outputs
+/build/
+/out/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# Compiled artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.exe
+*.pdb
+
+# Python tooling
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Benchmark and profiling output
+/results/generated/
+*.prof
+*.trace
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Sanitizer and crash output
+*.log
+core
+core.*
